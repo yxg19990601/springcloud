@@ -1,0 +1,39 @@
+server:
+  port: 8888
+  context-path: /dept-provider
+
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: xgcm.entity
+
+spring:
+  application:
+    name: dept-provider
+  datasource:
+    platform: mysql
+#    schema : classpath:schema.sql
+#    data : classpath:data.sql
+    username: root
+    password: hy123456
+    url: jdbc:mysql://localhost:3306/test
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      max-active: 20
+      filters: stat
+      initial-size: 5
+      max-wait: 60000
+      min-idle: 1
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-open-prepared-statements: 20
+
+
+
+
