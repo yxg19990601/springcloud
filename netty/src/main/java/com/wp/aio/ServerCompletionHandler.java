@@ -1,5 +1,6 @@
 package com.wp.aio;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
@@ -40,12 +41,14 @@ public class ServerCompletionHandler implements CompletionHandler<AsynchronousSo
 	private void write(AsynchronousSocketChannel asc, String response) {
 		try {
 			ByteBuffer buf = ByteBuffer.allocate(1024);
-			buf.put(response.getBytes());
+			buf.put(response.getBytes("UTF-8"));
 			buf.flip();
 			asc.write(buf).get();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 	}

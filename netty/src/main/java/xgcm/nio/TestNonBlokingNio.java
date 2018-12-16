@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -22,21 +23,28 @@ public class TestNonBlokingNio {
 
     @Test
     public void client() throws  Exception{
-       SocketChannel client = SocketChannel.open(new InetSocketAddress("127.0.0.1",8989));
+       SocketChannel client = SocketChannel.open(new InetSocketAddress("127.0.0.1",9999));
 
        // 切换为非阻塞式
-       client.configureBlocking(false);
+//       client.configureBlocking(false);
 
        // 分配一个缓冲区
        ByteBuffer allocate = ByteBuffer.allocate(1024);
 
-       // 当前时间
-       allocate.put(new Date().toString().getBytes());
+
+        for (int i = 0; i < 5 ; i++) {
+            Thread.sleep(1000);
+            // 当前时间
+            allocate.clear();
+            allocate.put(new Date().toString().getBytes("utf-8"));
+            allocate.flip();
+            client.write(allocate);
+
+        }
+
        // 切换为读模式
-       allocate.flip();
+
        // 通过通道写入到服务器
-       client.write(allocate);
-       client.shutdownOutput();
        client.close();
 
     }
@@ -64,8 +72,8 @@ public class TestNonBlokingNio {
 
         // 轮询获取选择器上已经 "准备就绪" 的事件
         while( true ) {
-            selector.select();
-            System.out.println("进入while");
+            int opsValue = selector.select();
+            System.out.println("opsValue = " + opsValue);
             // 获取选择器中所有的事件(已就绪)
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
             while (iterator.hasNext()) {
@@ -83,18 +91,28 @@ public class TestNonBlokingNio {
                     // 注册到选择器中
                     ssChannel.register(selector,SelectionKey.OP_READ);
                 } else if (next.isReadable()) {
+                    System.out.println("readData");
                     // 获取当前选择器读就绪状态的通道
                     SocketChannel  ssChannel = (SocketChannel) next.channel();
-                    ByteBuffer allocate = ByteBuffer.allocate(1024);
                     int len = 0;
-                    while ((ssChannel.read(allocate)) > 0) {
+                    while (true) {
+                        ByteBuffer allocate = ByteBuffer.allocate(1024);
+
+                        len = ssChannel.read(allocate);
+                        System.out.println(len);
+                        if (len == -1) {
+                            ssChannel.close();
+                            next.cancel();
+                            break;
+                        }
                         allocate.flip();
                         System.out.println(charset.decode(allocate).toString());
+                        allocate.clear();
                     }
 
-                    iterator.remove();
 
-                    System.out.println(ssChannel.getClass().getName());
+
+//                    System.out.println(ssChannel.getClass().getName());
                 }
 
             }

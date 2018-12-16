@@ -25,7 +25,10 @@ public class ServerHandler implements Runnable {
 				if(body == null) break;
 				System.out.println("Server:" + body);
 				out.println("Server response");
+
+
 			}
+			System.out.println("处理客户端请求完毕!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

@@ -15,6 +15,11 @@ public class AppTest
     @Test
     public void shouldAnswerWithTrue()
     {
+
+
+        int i = 7 + 8;
+
+        System.out.println("i = " + i+(89*10));
         assertTrue( true );
     }
 }

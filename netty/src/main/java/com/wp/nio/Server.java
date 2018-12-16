@@ -39,6 +39,7 @@ public class Server implements Runnable {
     public void run() {
         while (true) {
             try {
+                System.out.println("Server.run");
                 //1 必须要让多路复用器开始监听
                 this.seletor.select();
                 //2 返回多路复用器已经选择的结果集

@@ -11,7 +11,7 @@ public class Client {
     public static void main(String[] args) {
 
         //创建连接的地址
-        InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8765);
+        InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8989);
         //声明连接通道
         SocketChannel sc = null;
         //建立缓冲区

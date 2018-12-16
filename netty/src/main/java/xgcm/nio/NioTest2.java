@@ -36,25 +36,26 @@ public class NioTest2 {
         serverSocketChannel.register(selector,SelectionKey.OP_ACCEPT);
 
         while (true) {
-            selector.select(1000);
+            selector.select();
             Set<SelectionKey> selectionKeys = selector.selectedKeys();
             System.out.println("selector = " + selector);
             Iterator<SelectionKey> iterator = selectionKeys.iterator();
             while (iterator.hasNext()) {
+
                 SelectionKey selectionKey = iterator.next();
+                iterator.remove();
                 if (selectionKey.isAcceptable()) {
                     ServerSocketChannel server = (ServerSocketChannel) selectionKey.channel();
                     SocketChannel socketChannel = server.accept();
                     socketChannel.configureBlocking(false);
                     socketChannel.register(selector,SelectionKey.OP_READ);
                 } else if (selectionKey.isReadable()) {
-                    Thread.sleep(3000);
                     SocketChannel client = (SocketChannel) selectionKey.channel();
                     String msg = doRead(client);
                     System.out.println("msg = " + msg);
                 }
 
-                iterator.remove();
+
             }
 
 
